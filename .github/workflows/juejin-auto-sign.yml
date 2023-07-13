@@ -1,0 +1,47 @@
+name: juejin-auto-sign
+permissions:
+  contents: write
+on:
+  schedule:
+    # 执行两次 避免偶尔执行失败的情况出现
+    - cron: '15 22 * * *'
+    - cron: '30 23 * * *'
+  push:
+    branches:
+      - main
+      - master
+
+  # pull_request:
+  # branches: [ master,main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # if: github.event.repository.owner.id == github.event.sender.id
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: false
+      - name: Install dependencies
+        run: pnpm install
+      - name: run script
+        env:
+          USER_COOKIE: ${{ secrets.USER_COOKIE }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          USER_EMAIL: ${{ secrets.USER_EMAIL }}
+        run: |
+          pnpm run start
