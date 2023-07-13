@@ -35,51 +35,6 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 
 5. 每天的北京时间 8:00 左右，GitHub Actions 将自动执行任务。
 
-基础 [juejin-auto-sign.yml](.github/workflows/juejin-auto-sign.yml) 配置文件内容如下：
+6. 保证第二步 `USER_COOKIE` `OPENAI_API_KEY`变量设置完毕。如不需要邮件通知可忽略其他变量的设置。只有`USER_COOKIE` 只能完成基础的签到功能，`OPENAI_API_KEY` 是为了能够发沸点和文章所需的。
 
-```yaml
-name: juejin-auto-sign
-permissions:
-  contents: write
-on:
-  schedule:
-    # 执行两次，避免偶尔执行失败的情况出现
-    - cron: '15 22 * * *'
-    - cron: '30 23 * * *'
-  push:
-    branches:
-      - main
-      - master
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-          run_install: false
-      - name: Install dependencies
-        run: pnpm install
-      - name: Run script
-        env:
-          USER_COOKIE: ${{ secrets.USER_COOKIE }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          USER_EMAIL: ${{ secrets.USER_EMAIL }}
-        run: |
-          pnpm run start
-```
-
-以上是 juejin-helper 项目的介绍和使用说明。通过配置好环境变量和基础 YAML 文件，你可以实现自动化的掘金网站签到和日常任务处理。
+7. 修改本`README.md`文件任意内容提交即可立即触发自动签到和处理日常任务。
