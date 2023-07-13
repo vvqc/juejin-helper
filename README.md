@@ -33,9 +33,7 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 
 4. 关于发送邮件通知，本项目通知使用的是网易 163 邮箱。如果你想使用其他邮件服务商进行推送，请在 `config.js` 文件的 `email.provider` 选项中进行配置修改。
 
-5. 将提供的基础 YAML 配置文件复制到你的仓库的 `.github/workflows` 目录下，命名为 `juejin-helper.yml`。
-
-6. 每天的北京时间 8:00 左右，GitHub Actions 将自动执行任务。
+5. 每天的北京时间 8:00 左右，GitHub Actions 将自动执行任务。
 
 基础 [juejin-auto-sign.yml](.github/workflows/juejin-auto-sign.yml) 配置文件内容如下：
 
