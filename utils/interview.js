@@ -8,39 +8,25 @@
  *
  * Copyright (c) 2023 by h7ml<h7ml@qq.com>, All Rights Reserved.
  */
-const axios = require('axios')
 const _ = require('lodash')
 
 const types = ['one', 'two', 'today', 'beforetoday', 'yestoday', 'week']
 
 async function getInterview(type = 'beforetoday', all = false) {
-  const issues = []
-  let page = 1
-  let hasNextPage = true
+  const page = _.random(1, 1085)
 
-  while (hasNextPage) {
-    const response = await fetch(
-      `https://api.github.com/repos/haizlin/fe-interview/issues?page=${page}&per_page=100`,
-    )
-    const data = await response.json()
-    console.log('%c [ data ]-26', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+  const regex = /第\d+天/g
 
-    if (data.length === 0) {
-      // 当返回的数据为空时，表示已经获取完所有的问题，退出循环
-      hasNextPage = false
-    } else {
-      issues.push(...data)
-      page++
-    }
-  }
+  const response = await fetch(
+    `https://api.github.com/repos/haizlin/fe-interview/issues?page=${page}&per_page=5`,
+  )
+  const data = await response.json()
+  data.forEach((datum) => {
+    datum.body = datum.body.split('[3+1官网]')[0].replace(regex, '')
+    datum.title = datum.title.replace(regex, '')
+  })
 
-  const formattedIssues = _.map(issues, (issue) => ({
-    title: issue.title,
-    url: issue.html_url,
-    number: issue.number,
-    body: issue.title.split('题：')[1] ?? issue.title,
-  }))
-  return formattedIssues
+  return all ? data : _.sample(data).title
 }
 
 module.exports = {

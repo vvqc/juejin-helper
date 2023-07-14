@@ -2,6 +2,7 @@ const axios = require('axios')
 const _ = require('lodash')
 
 const types = ['today', 'history', 'categoryList', 'hot', 'search']
+const acttypes = ['one', 'two', 'today', 'beforetoday', 'yestoday', 'week']
 async function getInterviewHot() {
   return new Promise(async (resolve) => {
     const defaultInterviewHot = [
@@ -78,16 +79,13 @@ async function getInterviewHot() {
         count: 26,
       },
     ]
-    const res = await axios
-      .get(`http://api.h-camel.com/api?mod=interview&ctr=issues&act=${_.sample(types)}`)
-      .catch((error) => {
-        return resolve(defaultInterviewHot)
-      })
+    const url = `http://api.h-camel.com/api?mod=interview&ctr=issues&act=${_.sample(types)}`
+    const res = await axios.get(url).catch((error) => {
+      return resolve(defaultInterviewHot)
+    })
     if (res.status == 200) {
-      const data = _.shuffle(res.data.result)
-      if (data && data.length) {
-        return resolve(data)
-      }
+      const re = res.data.result || res.data.result.rows || res.data.result[acttypes]
+      return resolve(re)
     }
     return resolve(defaultInterviewHot)
   })

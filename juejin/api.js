@@ -306,19 +306,26 @@ class JuejinHttp {
   }
 
   // 创建文章
-  createArticle(title) {
+  createArticle(
+    title,
+    brief_content,
+    mark_content,
+    cover_image = '',
+    category_id,
+    tag_ids = ['6809640407484334093', '6809640398105870343'],
+  ) {
     return this.request({
       method: 'POST',
       url: 'https://api.juejin.cn/content_api/v1/article_draft/create',
       data: {
-        brief_content: '',
-        category_id: '0',
-        cover_image: '',
+        brief_content,
+        category_id: `${category_id}`,
+        cover_image,
         edit_type: 10,
         html_content: 'deprecated',
         link_url: '',
-        mark_content: '',
-        tag_ids: [],
+        mark_content,
+        tag_ids,
         title,
       },
     })

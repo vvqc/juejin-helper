@@ -32,48 +32,51 @@ const articlePublish = async (task) => {
   const todayInterview = await getInterview(randomElement, true)
   const dailyInterviewQuestion = await getDailyInterviewQuestion()
   const hotInterview = await getInterviewHot()
-  const interview = todayInterview?.length ? todayInterview : dailyInterviewQuestion // 容错处理。若请求当天问题失效，使用getInterviewHots
-  console.log('%c [ interview ]-36', 'font-size:13px; background:pink; color:#bf2c9f;', interview)
-  const coverImage = configEnv.juejin.coverImage ?? (await getCoverImage())
+  const randomNumbers = _.sampleSize(_.range(hotInterview.length + 1), 2);
+  const randomNumbersItem = [hotInterview[randomNumbers[0]], hotInterview[randomNumbers[1]]]
+
+  let interview = todayInterview.length ? todayInterview : dailyInterviewQuestion.length ? dailyInterviewQuestion : todayInterview // 容错处理。若请求当天问题失效，使用getInterviewHots
+  if (!_.isArray(interview)) interview = randomNumbersItem
+  const coverImage = configEnv.juejin.coverImage || await getCoverImage()
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
   const category_id =
-    configEnv.juejin.category_id ??
-    (await API.getCategorys()
+    configEnv.juejin.category_id ||
+    await API.getCategorys()
       .then((data) => {
-        return _.sample(data).category_id ?? '6809637767543259144'
+        return _.sample(data).category_id || '6809637767543259144'
       })
       .catch((e) => {
         console.log(`获取分类失败${e}`)
         return '6809637767543259144'
-      }))
+      })
   const theme_ids =
-    configEnv.juejin.theme_ids ??
-    (await API.getListHot()
+    configEnv.juejin.theme_ids ||
+    await API.getListHot()
       .then((data) => {
-        const numPositions = _.random(1, 10) // 生成 1 到 10 之间的随机数
+        const numPositions = _.random(0, 9) // 生成 1 到 10 之间的随机数
         return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
           return obj?.theme?.theme_id
-        }) ?? ['7210002980895916043'])
+        }) || ['7210002980895916043'])
       })
       .catch((e) => {
         console.log(`获取分类失败${e}`)
         return ['7244474054189514808']
-      }))
+      })
 
   const tag_ids =
-    configEnv.juejin.tag_ids ??
-    (await API.getTags()
+    configEnv.juejin.tag_ids ||
+    await API.getTags()
       .then((data) => {
         const numPositions = _.random(1, 10) // 生成 1 到 10 之间的随机数
         return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
           return obj?.tag_id
-        }) ?? ['6809640407484334093'])
+        }) || ['6809640407484334093'])
       })
       .catch((e) => {
         console.log(`获取分类失败${e}`)
         return ['6809640408797167623']
-      }))
+      })
 
   const times = task.limit - task.done //需要执行的次数
   console.log(`需要发布${times}篇文章`)
@@ -91,7 +94,7 @@ const articlePublish = async (task) => {
       '\n' +
       `${interviewInfo.title}` +
       '\n' +
-      `内容包含:${interviewInfo.body}`
+      `内容包含:${interviewInfo.body} ,请将内容过滤标题和问题,只保留答案`
       : '请写一篇一千字markdown格式的文章  标题是:' + '\n' + `${interviewInfo.title}`
     const content = await chatCompletion(query)
     console.log(
@@ -114,6 +117,7 @@ const articlePublish = async (task) => {
   }
   const browser = await getBrowser()
   const page = await browser.newPage()
+  await setPageCookie(page, cookie)
   // 获取全屏窗口的大小
   const dimensions = await page.evaluate(() => {
     return {
@@ -123,11 +127,12 @@ const articlePublish = async (task) => {
   })
   // 设置视口大小
   await page.setViewport(dimensions)
-
+  await page.goto("https://juejin.cn/user/center/growth")
   for (let i = 0; i < times; i++) {
     let currentArticle = articles[i]
     let { title, brief_content, content } = currentArticle
-    const articleInfo = await API.createArticle(title).catch((err) => {
+    const articleInfo = await API.createArticle(title, brief_content, content, coverImage, category_id,
+    ).catch((err) => {
       console.log(`发布失败`)
       console.log(err)
     })
@@ -145,8 +150,7 @@ const articlePublish = async (task) => {
       console.log(`发布失败2`)
       console.log(err)
     })
-    const cookie = await getCookie()
-    await setPageCookie(page, cookie)
+
     // 去草稿箱点击模拟发布文章
     await page.goto(`https://juejin.cn/editor/drafts/${article_id}`)
     await page.waitForSelector('.xitu-btn')
