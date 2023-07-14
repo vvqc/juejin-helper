@@ -29,10 +29,11 @@ const setPageCookie = async (page, cookie) => {
 
 const articlePublish = async (task) => {
   const randomElement = _.sample(types)
-  const todayInterview = await getInterview(randomElement, (all = true))
+  const todayInterview = await getInterview(randomElement, true)
   const dailyInterviewQuestion = await getDailyInterviewQuestion()
   const hotInterview = await getInterviewHot()
-  const interview = todayInterview.length ? todayInterview : dailyInterviewQuestion // 容错处理。若请求当天问题失效，使用getInterviewHots
+  const interview = todayInterview?.length ? todayInterview : dailyInterviewQuestion // 容错处理。若请求当天问题失效，使用getInterviewHots
+  console.log('%c [ interview ]-36', 'font-size:13px; background:pink; color:#bf2c9f;', interview)
   const coverImage = configEnv.juejin.coverImage ?? (await getCoverImage())
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)

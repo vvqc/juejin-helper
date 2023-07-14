@@ -9,28 +9,38 @@
  * Copyright (c) 2023 by h7ml<h7ml@qq.com>, All Rights Reserved.
  */
 const axios = require('axios')
+const _ = require('lodash')
 
 const types = ['one', 'two', 'today', 'beforetoday', 'yestoday', 'week']
 
 async function getInterview(type = 'beforetoday', all = false) {
-  return new Promise(async (resolve) => {
-    const defaultInterview = `请写一个合并Promise的函数，实现异步函数顺序执行，并把结果顺序输出`
-    if (!types.includes(type)) {
-      return resolve(defaultInterview)
+  const issues = []
+  let page = 1
+  let hasNextPage = true
+
+  while (hasNextPage) {
+    const response = await fetch(
+      `https://api.github.com/repos/haizlin/fe-interview/issues?page=${page}&per_page=100`,
+    )
+    const data = await response.json()
+    console.log('%c [ data ]-26', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+
+    if (data.length === 0) {
+      // 当返回的数据为空时，表示已经获取完所有的问题，退出循环
+      hasNextPage = false
+    } else {
+      issues.push(...data)
+      page++
     }
-    const res = await axios
-      .get('http://api.h-camel.com/api?mod=interview&ctr=issues&act=today')
-      .catch((error) => {
-        return resolve(defaultInterview)
-      })
-    if (res.status == 200) {
-      const data = res.data.result
-      if (data && data.beforetoday) {
-        return all ? resolve(data[type]) : resolve(data[type][0].title)
-      }
-    }
-    return resolve(defaultInterview)
-  })
+  }
+
+  const formattedIssues = _.map(issues, (issue) => ({
+    title: issue.title,
+    url: issue.html_url,
+    number: issue.number,
+    body: issue.title.split('题：')[1] ?? issue.title,
+  }))
+  return formattedIssues
 }
 
 module.exports = {

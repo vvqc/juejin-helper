@@ -3,8 +3,6 @@ const fetch = require('node-fetch')
 
 async function getCoverImage() {
   const urlLists = [
-    'https://api.likepoems.com/img/nature',
-    'https://api.likepoems.com/img/pc',
     'https://api.thecatapi.com/v1/images/search',
     'https://dog.ceo/api/breeds/image/random',
   ]
