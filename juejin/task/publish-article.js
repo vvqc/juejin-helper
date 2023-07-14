@@ -15,6 +15,7 @@ const { getInterview, types } = require('../../utils/interview')
 const { chatCompletion } = require('../../utils/chatCompletion')
 const { getBrowser } = require('../../puppeteer/browser')
 const { getInterviewHot } = require('../../utils/interviewHot')
+const { getCoverImage } = require('../../utils/coverImage')
 const setPageCookie = async (page, cookie) => {
   const cookies = cookie.split(';').map((pair) => {
     const name = pair.trim().slice(0, pair.trim().indexOf('='))
@@ -29,6 +30,7 @@ const articlePublish = async (task) => {
   const todayInterview = await getInterview(randomElement, (all = true))
   const hotInterview = await getInterviewHot()
   const interview = todayInterview ?? hotInterview // 容错处理。若请求当天问题失效，使用getInterviewHots
+  const coverImage = await getCoverImage()
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
   const times = task.limit - task.done //需要执行的次数
@@ -83,7 +85,7 @@ const articlePublish = async (task) => {
       console.log(err)
     })
     const article_id = articleInfo['id']
-    await API.updateArticle(article_id, title, brief_content, content).catch((err) => {
+    await API.updateArticle(article_id, title, brief_content, content, coverImage).catch((err) => {
       console.log(`发布失败2`)
       console.log(err)
     })

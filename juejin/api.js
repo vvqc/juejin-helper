@@ -308,15 +308,15 @@ class JuejinHttp {
   }
 
   // 更新文章
-  // 文章id ,简介 , markdown content
-  updateArticle(id, title, brief_content, mark_content) {
+  // 文章id ,简介 , markdown content img
+  updateArticle(id, title, brief_content, mark_content ,coverImage) {
     return this.request({
       method: 'POST',
       url: 'https://api.juejin.cn/content_api/v1/article_draft/update',
       data: {
         brief_content,
         category_id: "6809637767543259144", //前端 分类
-        cover_image: "https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbcbbd3c8e3b410b83553ea0488a54fe~tplv-k3u1fbpfcp-watermark.image?",
+        cover_image: coverImage,
         edit_type: 10,
         html_content: "deprecated",
         link_url: "",
