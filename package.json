@@ -2,18 +2,22 @@
   "name": "juejin-helper",
   "version": "1.0.0",
   "description": "稀土掘金助手，包含每日签到，沾喜气，免费抽奖，每日成长任务等",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
+  "author": "https://github.com/Wiederhoeft/juejin-helper",
+  "license": "ISC",
   "keywords": [
     "掘金",
     "juejin",
     "掘金签到",
     "掘金成长等级"
   ],
-  "author": "https://github.com/Wiederhoeft/juejin-helper",
-  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
+  },
   "dependencies": {
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
@@ -21,5 +25,16 @@
     "node-json-db": "^2.1.0",
     "nodemailer": "^6.7.7",
     "puppeteer": "^15.5.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config-basic": "^0.39.3",
+    "@femm/prettier": "^1.1.0",
+    "@femm/verify-commit": "^1.0.1",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8"
   }
 }

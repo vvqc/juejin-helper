@@ -7,10 +7,10 @@ const {
   followAuthor,
   publishPin,
   readArticle,
-  publishArticle
-} = require("./task/index")
+  publishArticle,
+} = require('./task/index')
 
-const handleTask = async task => {
+async function handleTask(task) {
   const id = task.task_id
   if (id == 13) {
     await readArticle(task)
@@ -41,7 +41,6 @@ const handleTask = async task => {
   }
 }
 
-
 module.exports = {
-  handleTask
+  handleTask,
 }

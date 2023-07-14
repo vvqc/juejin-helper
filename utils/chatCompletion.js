@@ -19,10 +19,10 @@ const chatCompletion = async (content) => {
         messages: [
           {
             role: 'system',
-            content: content
-          }
+            content: content,
+          },
         ],
-        temperature: 0.7
+        temperature: 0.7,
       })
 
       const config = {
@@ -32,9 +32,9 @@ const chatCompletion = async (content) => {
           'https://nakoruru.h7ml.cn/proxy/api.openai.com/v1/chat/completions',
         headers: {
           Authorization: `Bearer ${configEnv.chatgpt.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        data: data
+        data: data,
       }
 
       const response = await axios(config)
@@ -48,5 +48,5 @@ const chatCompletion = async (content) => {
 }
 
 module.exports = {
-  chatCompletion
+  chatCompletion,
 }

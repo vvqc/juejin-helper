@@ -10,12 +10,14 @@
  */
 const _ = require('lodash')
 const { getCookie } = require('../cookie')
+const configEnv = require('../../config')
 const JuejinHttp = require('../api')
 const { getInterview, types } = require('../../utils/interview')
 const { chatCompletion } = require('../../utils/chatCompletion')
 const { getBrowser } = require('../../puppeteer/browser')
 const { getInterviewHot } = require('../../utils/interviewHot')
 const { getCoverImage } = require('../../utils/coverImage')
+const { getDailyInterviewQuestion } = require('../../utils/dailyInterviewQuestion')
 const setPageCookie = async (page, cookie) => {
   const cookies = cookie.split(';').map((pair) => {
     const name = pair.trim().slice(0, pair.trim().indexOf('='))
@@ -28,13 +30,61 @@ const setPageCookie = async (page, cookie) => {
 const articlePublish = async (task) => {
   const randomElement = _.sample(types)
   const todayInterview = await getInterview(randomElement, (all = true))
+  const dailyInterviewQuestion = await getDailyInterviewQuestion()
+  console.log(
+    '%c [ DailyInterviewQuestion ]-34',
+    'font-size:13px; background:pink; color:#bf2c9f;',
+    dailyInterviewQuestion,
+  )
   const hotInterview = await getInterviewHot()
-  const interview = todayInterview ?? hotInterview // 容错处理。若请求当天问题失效，使用getInterviewHots
-  const coverImage = await getCoverImage()
+  const interview = todayInterview.length ? todayInterview : dailyInterviewQuestion // 容错处理。若请求当天问题失效，使用getInterviewHots
+  const coverImage = configEnv.juejin.coverImage ?? (await getCoverImage())
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
+  const category_id =
+    configEnv.juejin.category_id ??
+    (await API.getCategorys()
+      .then((data) => {
+        return _.sample(data).category_id ?? '6809637767543259144'
+      })
+      .catch((e) => {
+        console.log(`获取分类失败${e}`)
+        return '6809637767543259144'
+      }))
+  const theme_ids =
+    configEnv.juejin.theme_ids ??
+    (await API.getListHot()
+      .then((data) => {
+        const numPositions = _.random(1, 10) // 生成 1 到 10 之间的随机数
+        return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
+          return obj?.theme?.theme_id
+        }) ?? ['7210002980895916043'])
+      })
+      .catch((e) => {
+        console.log(`获取分类失败${e}`)
+        return ['7244474054189514808']
+      }))
+
+  const tag_ids =
+    configEnv.juejin.tag_ids ??
+    (await API.getTags()
+      .then((data) => {
+        const numPositions = _.random(1, 10) // 生成 1 到 10 之间的随机数
+        return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
+          return obj?.tag_id
+        }) ?? ['6809640407484334093'])
+      })
+      .catch((e) => {
+        console.log(`获取分类失败${e}`)
+        return ['6809640408797167623']
+      }))
+
   const times = task.limit - task.done //需要执行的次数
   console.log(`需要发布${times}篇文章`)
+  if (!configEnv.chatgpt.OPENAI_API_KEY) {
+    console.log(`未配置OPENAI_API_KEY,跳过文章发表`)
+    return
+  }
   let articles = []
   for (let i = 0; i < times; i++) {
     const interviewInfo = interview[i]
@@ -49,7 +99,9 @@ const articlePublish = async (task) => {
       : '请写一篇一千字markdown格式的文章  标题是:' + '\n' + `${interviewInfo.title}`
     const content = await chatCompletion(query)
     console.log(
-      `当前正在生成第${i + 1}篇文章\n 标题:${title}\n 文章长度:${content.length}\n  内容:${content}`
+      `当前正在生成第${i + 1}篇文章\n 标题:${title}\n 文章长度:${
+        content.length
+      }\n  内容:${content}`,
     )
     if (!content.length) {
       console.log(`文章长度为0,跳过文章发表`)
@@ -62,7 +114,7 @@ const articlePublish = async (task) => {
     articles.push({
       title,
       content,
-      brief_content
+      brief_content,
     })
   }
   const browser = await getBrowser()
@@ -71,7 +123,7 @@ const articlePublish = async (task) => {
   const dimensions = await page.evaluate(() => {
     return {
       width: window.screen.width / 2,
-      height: window.screen.height
+      height: window.screen.height,
     }
   })
   // 设置视口大小
@@ -85,7 +137,16 @@ const articlePublish = async (task) => {
       console.log(err)
     })
     const article_id = articleInfo['id']
-    await API.updateArticle(article_id, title, brief_content, content, coverImage).catch((err) => {
+    await API.updateArticle(
+      article_id,
+      title,
+      brief_content,
+      content,
+      coverImage,
+      category_id,
+      theme_ids,
+      tag_ids,
+    ).catch((err) => {
       console.log(`发布失败2`)
       console.log(err)
     })
@@ -101,7 +162,7 @@ const articlePublish = async (task) => {
 
     // 监听发布成功
     const publishRes = await page.waitForResponse((response) =>
-      response.url().includes(`https://api.juejin.cn/content_api/v1/article/publish`)
+      response.url().includes(`https://api.juejin.cn/content_api/v1/article/publish`),
     )
     const publishResJson = await publishRes.json()
     if (publishResJson.err_no == 0) {

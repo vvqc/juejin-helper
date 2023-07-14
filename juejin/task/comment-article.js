@@ -3,10 +3,11 @@ const _ = require('lodash')
 const { getCookie } = require('../cookie')
 const JuejinHttp = require('../api')
 const { getArticleList, saveComments } = require('../common')
-const { getRandomInt } = require("./../../utils/index")
-const { insertTo, dbGet } = require("../../utils/db")
+const { insertTo, dbGet } = require('../../utils/db')
 const config = require('../../config')
-const articleComment = async task => {
+const { getRandomInt } = require('./../../utils/index')
+
+async function articleComment(task) {
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
   const articles = await getArticleList(200)
@@ -14,7 +15,7 @@ const articleComment = async task => {
     console.log(`获取文章列表失败[d1]`)
     return
   }
-  const times = task.limit - task.done; //需要执行的次数
+  const times = task.limit - task.done // 需要执行的次数
   console.log(`需要评论${times}篇文章`)
   const defaultComments = [
     '感谢，学习了，受益颇多',
@@ -32,20 +33,20 @@ const articleComment = async task => {
     '受教了，谢谢分享',
     '我从你的文章中发现了一个新的技巧',
     '点赞！你的文章非常清晰',
-    '感谢你的文章，我现在更有信心去尝试了'
+    '感谢你的文章，我现在更有信心去尝试了',
   ]
   for (let i = 0; i < times; i++) {
     const article = articles[i] || false
-    if (!article) break;
-    const { article_id, title } = article['article_info']
+    if (!article) break
+    const { article_id, title } = article.article_info
     await saveComments(article_id, 2)
     const newDbComments = await dbGet('/comments/article')
     const comments = defaultComments.concat(newDbComments || [])
     const index = getRandomInt(0, comments.length - 1)
-    const words = _.sample(defaultComments);
+    const words = _.sample(defaultComments)
     const comment = await API.articleCommentAdd(article_id, words)
     // 删除评论
-    if (!config.user.privacy) await API.articleCommentRemove(comment['comment_id'])
+    if (!config.user.privacy) await API.articleCommentRemove(comment.comment_id)
   }
   console.log(`评论文章 done`)
 }

@@ -1,10 +1,10 @@
-const { JsonDB } = require('node-json-db');
+const path = require('node:path')
+const { JsonDB } = require('node-json-db')
 const { Config } = require('node-json-db/dist/lib/JsonDBConfig')
-const path = require('path')
+
 const db = new JsonDB(new Config(path.join(__dirname, '../data/data'), true, true, '/'))
 
-
-const insertTo = (dbKey, ...params) => {
+function insertTo(dbKey, ...params) {
   return new Promise(async (r, j) => {
     try {
       await db.push(dbKey, ...params, false)
@@ -17,8 +17,8 @@ const insertTo = (dbKey, ...params) => {
   })
 }
 
-const dbGet = (key, isArray = true) => {
-  return new Promise(async r => {
+function dbGet(key, isArray = true) {
+  return new Promise(async (r) => {
     try {
       const data = await db.getData(key)
       r(data)
@@ -31,5 +31,5 @@ insertTo('/homepage', 'https://github.com/Wiederhoeft/juejin-helper')
 module.exports = {
   db,
   insertTo,
-  dbGet
+  dbGet,
 }

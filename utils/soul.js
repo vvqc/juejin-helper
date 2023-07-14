@@ -4,9 +4,9 @@
  * @LastEditors: h7ml <h7ml@qq.com>
  * @LastEditTime: 2022-11-28 13:51:55
  * @FilePath: \juejin-helper\utils\soul.js
- * @Description: 
- * 
- * Copyright (c) 2022 by h7ml<h7ml@qq.com>, All Rights Reserved. 
+ * @Description:
+ *
+ * Copyright (c) 2022 by h7ml<h7ml@qq.com>, All Rights Reserved.
  */
 const soul = [
   '你昨天晚上又没回我信息，我却看见你的游戏在线，在我再一次孜孜不倦的骚扰你的情况下,你终于跟我说了一句最长的话 “你他妈是不是有病” 我又陷入了沉思，这一定有什么含义,我想了很久你竟然提到了我的妈妈，原来你已经想得那么长远了，想和我结婚见我的父母，我太感动了真的，真的，那你现在在干嘛，我好想你，我妈妈说她也很喜欢你。',
@@ -346,13 +346,13 @@ const soul = [
   '跟你网恋被我爸发现了，我爸说在发现我网恋就打断我的腿，幸好不是胳膊还可以继续和你聊天，就算连胳膊都打断了，我的心里还有你的位置',
   '外面下了好大的雨，我家里只有一把伞， 我拿给了他，他和她一起撑着伞走远了， 留下我一个人在屋檐下躲雨。 我知道他怕我淋雨，所以才没叫我一起走的，他真贴心！我更爱他了……',
   '昨天我还是照常给你发了好多消息 你回了我五个字[烦不烦啊你] 你开始关心我觉不觉得烦了 我太感动了 受宠若惊的 不烦不烦 你天天骂我我都不会觉得你烦',
-  '夜深我给你打了一通电话，你终于接了。听到了你发出啊啊啊啊的声音，你说你脚痛，我想你一定是很难受吧。电话那边还有个男的对你说[来换个姿势]，一定是在做理疗了。期待你早日康复。'
-];
+  '夜深我给你打了一通电话，你终于接了。听到了你发出啊啊啊啊的声音，你说你脚痛，我想你一定是很难受吧。电话那边还有个男的对你说[来换个姿势]，一定是在做理疗了。期待你早日康复。',
+]
 
 function randomSentence() {
-  return soul[Math.floor(Math.random() * soul.length)];
+  return soul[Math.floor(Math.random() * soul.length)]
 }
 
 module.exports = {
-  randomSentence
+  randomSentence,
 }

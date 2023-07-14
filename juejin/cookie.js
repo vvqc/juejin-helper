@@ -1,8 +1,8 @@
 const config = require('../config/index')
-const { getBrowser, closeBrowser } = require("../puppeteer/index")
+const { getBrowser, closeBrowser } = require('../puppeteer/index')
 const calcGapPosition = require('../puppeteer/gap')
 
-const getCookie = async () => {
+async function getCookie() {
   if (global._cookie) return global._cookie
   try {
     const cookieStr = config.user.juejinCookie
@@ -14,5 +14,5 @@ const getCookie = async () => {
 }
 
 module.exports = {
-  getCookie
+  getCookie,
 }

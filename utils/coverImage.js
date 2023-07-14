@@ -1,19 +1,24 @@
-const axios = require('axios')
 const _ = require('lodash')
 
-const getCoverImage = async () => {
-  const urlLists = ['https://api.likepoems.com/img/nature', 'https://api.likepoems.com/img/pc']
-  const defaultCoverImage =
-    'https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbcbbd3c8e3b410b83553ea0488a54fe~tplv-k3u1fbpfcp-watermark.image?'
+async function getCoverImage() {
+  const urlLists = [
+    'https://api.likepoems.com/img/nature',
+    'https://api.likepoems.com/img/pc',
+    'https://api.thecatapi.com/v1/images/search',
+    'https://dog.ceo/api/breeds/image/random',
+  ]
+  const defaultCoverImage = 'https://http.cat/111'
 
   return new Promise(async (resolve) => {
     try {
-      const config = {
-        method: 'get',
-        url: _.sample(urlLists)
+      const url = _.sample(urlLists)
+      const response = await fetch(url)
+      if (response.ok) {
+        const data = await response.json()
+        resolve(data.message || data.url || data[0].url)
+      } else {
+        resolve(defaultCoverImage)
       }
-      const response = await axios(config)
-      resolve(response.request.res.responseUrl)
     } catch (error) {
       console.log(error)
       resolve(defaultCoverImage)
@@ -22,5 +27,5 @@ const getCoverImage = async () => {
 }
 
 module.exports = {
-  getCoverImage
+  getCoverImage,
 }

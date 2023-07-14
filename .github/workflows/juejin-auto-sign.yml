@@ -2,6 +2,8 @@ name: juejin-auto-sign
 permissions:
   contents: write
 on:
+  watch:
+    types: [starred]
   schedule:
     # 执行两次 避免偶尔执行失败的情况出现
     - cron: '15 22 * * *'
@@ -28,7 +30,7 @@ jobs:
       - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 16.x
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
