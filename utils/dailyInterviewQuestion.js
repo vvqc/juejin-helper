@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const _ = require('lodash')
 
 async function getDailyInterviewQuestion() {
   const issues = []

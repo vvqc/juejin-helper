@@ -31,11 +31,6 @@ const articlePublish = async (task) => {
   const randomElement = _.sample(types)
   const todayInterview = await getInterview(randomElement, (all = true))
   const dailyInterviewQuestion = await getDailyInterviewQuestion()
-  console.log(
-    '%c [ DailyInterviewQuestion ]-34',
-    'font-size:13px; background:pink; color:#bf2c9f;',
-    dailyInterviewQuestion,
-  )
   const hotInterview = await getInterviewHot()
   const interview = todayInterview.length ? todayInterview : dailyInterviewQuestion // 容错处理。若请求当天问题失效，使用getInterviewHots
   const coverImage = configEnv.juejin.coverImage ?? (await getCoverImage())
@@ -92,15 +87,14 @@ const articlePublish = async (task) => {
     console.log('%c [ title ]-40', 'font-size:13px; background:pink; color:#bf2c9f;', title)
     const query = interviewInfo?.body
       ? '请写一篇一千字的markdown格式文章  标题是:' +
-        '\n' +
-        `${interviewInfo.title}` +
-        '\n' +
-        `内容包含:${interviewInfo.body}`
+      '\n' +
+      `${interviewInfo.title}` +
+      '\n' +
+      `内容包含:${interviewInfo.body}`
       : '请写一篇一千字markdown格式的文章  标题是:' + '\n' + `${interviewInfo.title}`
     const content = await chatCompletion(query)
     console.log(
-      `当前正在生成第${i + 1}篇文章\n 标题:${title}\n 文章长度:${
-        content.length
+      `当前正在生成第${i + 1}篇文章\n 标题:${title}\n 文章长度:${content.length
       }\n  内容:${content}`,
     )
     if (!content.length) {

@@ -525,5 +525,6 @@
   "workbench.tree.indent": 14,
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
-  }
+  },
+  "editor.cursorSmoothCaretAnimation": "on"
 }
