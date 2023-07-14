@@ -1,3 +1,5 @@
+const fetch = require('node-fetch')
+
 async function getDailyInterviewQuestion() {
   const issues = []
   let page = 1

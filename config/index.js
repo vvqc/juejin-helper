@@ -18,11 +18,10 @@ module.exports = {
     login: 'https://juejin.cn/login',
     loginApi: '/passport/web/user/login',
     verifyApi: 'verify.snssdk.com/captcha/verify',
-    category_id: '6809637767543259144',
-    theme_ids: ['7243698841848348730'],
-    tag_ids: ['6809640407484334093', '6809640398105870343', '6809640404791590919'],
-    coverImage:
-      'https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbcbbd3c8e3b410b83553ea0488a54fe~tplv-k3u1fbpfcp-watermark.image?',
+    category_id: process.env.category_id,
+    theme_ids: process.env.theme_ids,
+    tag_ids: process.env.tag_ids,
+    coverImage: process.env.coverImage
   },
   user: {
     mobile: process.env.USER_MOBILE, //你的掘金登录手机号

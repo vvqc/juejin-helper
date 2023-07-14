@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fetch = require('node-fetch')
 
 async function getCoverImage() {
   const urlLists = [
