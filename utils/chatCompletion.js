@@ -58,3 +58,7 @@ const chatCompletion = async (content) => {
     }
   })
 }
+
+module.exports = {
+  chatCompletion
+}
