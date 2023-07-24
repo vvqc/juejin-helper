@@ -18,7 +18,7 @@ async function pinPublish(task) {
     for (let i = 0; i < times; i++) {
       const interviewType = types[i]
       const interview = await getInterview(interviewType)
-      const completion = await chatCompletion('请用800字以内回复:' + '\n' + `${interview}`)
+      const completion = await chatCompletion('请用500字以内回复:' + '\n' + `${interview}`)
       console.log(
         '%c [ interview ]-19',
         'font-size:13px; background:pink; color:#bf2c9f;',
