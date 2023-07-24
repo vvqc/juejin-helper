@@ -6,7 +6,7 @@ async function sendEmail(params) {
     console.log(new Error(`邮件发送失败：未配置邮箱信息`))
     return
   }
-  if (!params || typeof params !== 'object' || !params.to || !params.subjec) {
+  if (!params || typeof params !== 'object' || !params.to || !params.subject) {
     console.log(new Error(`邮件发送失败：参数错误`))
     return
   }
