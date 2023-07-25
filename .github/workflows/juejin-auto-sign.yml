@@ -19,18 +19,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # if: github.event.repository.owner.id == github.event.sender.id
-
-    strategy:
-      matrix:
-        node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
+       - name: Checkout
+        uses: actions/checkout@v2
         with:
-          node-version: 16.x
+          repository: 'Wiederhoeft/juejin-helper'
+          branch: main
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -46,4 +41,4 @@ jobs:
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           USER_EMAIL: ${{ secrets.USER_EMAIL }}
         run: |
-          pnpm run start
+          node index.js
