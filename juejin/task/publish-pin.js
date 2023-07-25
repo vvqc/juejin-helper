@@ -25,7 +25,11 @@ async function pinPublish(task) {
         interview,
       )
       if (interview && completion) {
-        const words = `${interview}` + '\n' + ` ${completion} `
+        let words = `${interview}` + '\n' + ` ${completion} `
+        if (words.length > 1000) {
+          console.log(`沸点内容超过1000字，截取前1000字`)
+          words = words.slice(0, 1000)
+        }
         console.log(`发布沸点：${words}`)
         const pinRes = await API.pinPublish(words)
         // 删除刚发布的沸点
