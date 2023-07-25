@@ -26,12 +26,17 @@ async function pinPublish(task) {
       )
       if (interview && completion) {
         let words = `${interview}` + '\n' + ` ${completion} `
+        let remainingWords = ''
         if (words.length > 1000) {
           console.log(`沸点内容超过1000字，截取前1000字`)
           words = words.slice(0, 1000)
+          remainingWords = words.slice(1000)
         }
         console.log(`发布沸点：${words}`)
         const pinRes = await API.pinPublish(words)
+        if (remainingWords) {
+          await API.articleCommentAdd(pinRes.msg_id, remainingWords, 4)
+        }
         // 删除刚发布的沸点
         // if (config.user.privacy) await API.pinRemove(pinRes['msg_id']);
         console.log(`发布沸点 done`)
