@@ -29,12 +29,13 @@ async function pinPublish(task) {
         let remainingWords = ''
         if (words.length > 1000) {
           console.log(`沸点内容超过1000字，截取前1000字`)
-          words = words.slice(0, 1000)
           remainingWords = words.slice(1000)
+          words = words.slice(0, 1000)
         }
         console.log(`发布沸点：${words}`)
         const pinRes = await API.pinPublish(words)
         if (remainingWords) {
+          console.log(`沸点文字超过1000字，将截取的部分发布到沸点：${remainingWords}`)
           await API.articleCommentAdd(pinRes.msg_id, remainingWords, 4)
         }
         // 删除刚发布的沸点

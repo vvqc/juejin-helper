@@ -31,7 +31,7 @@ const chatCompletion = async (content) => {
           },
           {
             "role": "user",
-            "content": `请用500字以内回复: ${content}，\n  返回文本格式，必要的时候添加代码解释和注释。代码也在总体的字数控制范围内`
+            "content": `请用500字以内回复: ${content}，\n  返回文本格式，必要的时候添加代码解释和注释,但是不要有任何的信息帮助之类的词汇总结。代码也在总体的字数控制范围内`
           }
         ],
         "temperature": 0.7
