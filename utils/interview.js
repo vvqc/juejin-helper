@@ -23,7 +23,7 @@ async function getInterview(type = 'beforetoday', all = false) {
   const data = await response.json()
   data.forEach((datum) => {
     datum.body = datum.body.split('[3+1官网]')[0].replace(regex, '')
-    datum.title = datum.title.replace(regex, '')
+    datum.title = _.tail(_.split(datum.title.replace(regex, ''), '] ')).join('')
   })
 
   return all ? data : _.sample(data).title

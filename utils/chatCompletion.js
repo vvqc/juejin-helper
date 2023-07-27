@@ -9,6 +9,7 @@
  * Copyright (c) 2023 by h7ml<h7ml@qq.com>, All Rights Reserved.
  */
 const axios = require('axios')
+const _ = require('lodash')
 const configEnv = require('../config')
 const chatCompletion = async (content) => {
   const defaultCompletion = ''
@@ -50,7 +51,7 @@ const chatCompletion = async (content) => {
       }
 
       const response = await axios(config)
-      const completion = JSON.stringify(response.data.choices[0].message.content)
+      const completion = _.tail(_.split(JSON.stringify(response.data.choices[0].message.content), '] ')).join('').replace(/"$/, '')
       resolve(completion.replace(/\\n/g, '\n'))
     } catch (error) {
       console.log(error)
