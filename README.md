@@ -31,7 +31,7 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 
 3. 在 `Settings->Actions` 确保 Actions 功能处于开启状态。
 
-4. 关于发送邮件通知，本项目通知使用的是网易 163 邮箱。如果你想使用其他邮件服务商进行推送，请在 `config.js` 文件的 `email.provider` 选项中进行配置修改。
+4. 关于发送邮件通知，本项目通知使用的是使用 smtp 服务器。如果你想使用其他邮件服务商进行推送，请在 `config.js` 文件的 `email.provider.host` 选项中进行配置修改,或通过传入环境变量`EMAIL_HOST`指定邮件服务器地址。
 
 5. 每天的北京时间 `06:15` `07:30`左右，GitHub Actions 将自动执行任务。
 

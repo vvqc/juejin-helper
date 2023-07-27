@@ -1,14 +1,13 @@
 require('dotenv').config()
 
 module.exports = {
-  // 这里的邮箱配置以网易邮箱为例，qq邮箱端口和host等均会有差异 具体可以留言提问或百度
   email: {
     provider: {
       auth: {
-        user: process.env.EMAIL_USER, // 你的网易邮箱账号
-        pass: process.env.EMAIL_PASS, // 你的网易邮箱 smpt 授权码
+        user: process.env.EMAIL_USER, // 你的邮箱账号
+        pass: process.env.EMAIL_PASS, // 你的邮箱 smpt 授权码
       },
-      host: 'smtp.163.com',
+      host: process.env.EMAIL_HOST ?? `smtp.${process.env.EMAIL_USER.split('@')[1]}`, // 你的邮箱服务器地址 如 smtp.qq.com 可以传入指定服务器。如果没有指定服务器，将根据你的邮箱自动选择服务器
       secure: true,
       port: 465,
       secureConnection: true,
