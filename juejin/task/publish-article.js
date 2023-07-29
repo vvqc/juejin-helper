@@ -90,11 +90,11 @@ const articlePublish = async (task) => {
     const title = interviewInfo?.title
     console.log('%c [ title ]-40', 'font-size:13px; background:pink; color:#bf2c9f;', title)
     const query = interviewInfo?.body
-      ? '请写一篇一千字的markdown格式文章  标题是:' +
+      ? '请写一篇一千字的markdown格式文章  核心内容是关于:' +
       '\n' +
       `${interviewInfo.title}` +
       '\n' +
-      `内容包含:${interviewInfo.body} ,请将内容过滤标题和问题,只保留答案`
+      `请将内容过滤标题和问题,只保留答案`
       : '请写一篇一千字markdown格式的文章  标题是:' + '\n' + `${interviewInfo.title}`
     const content = await chatCompletion(query)
     console.log(

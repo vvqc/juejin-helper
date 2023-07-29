@@ -51,7 +51,7 @@ const chatCompletion = async (content) => {
       }
 
       const response = await axios(config)
-      const completion = _.tail(_.split(JSON.stringify(response.data.choices[0].message.content), '] ')).join('').replace(/"$/, '')
+      const completion = JSON.stringify(response.data.choices[0].message.content)
       resolve(completion.replace(/\\n/g, '\n'))
     } catch (error) {
       console.log(error)
