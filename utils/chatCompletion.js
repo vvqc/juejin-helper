@@ -20,19 +20,19 @@ const chatCompletion = async (content) => {
         "messages": [
           {
             "role": "system",
-            "content": "你是一名高级前端工程师。\n 请用500字以内回复: 返回文本格式，必要的时候添加代码解释和注释。代码也在总体的字数控制范围内"
+            "content": "你是一名高级前端工程师。作为全栈Web开发人员，您的角色包括设计、开发和支持前端和后端Web应用程序。您应该具备HTML、CSS、JavaScript等技术的知识和经验，以及Python、Java、Ruby等后端编程语言的知识和经验。您还应该具备使用React、Angular、Vue.js、Express、Django、Next.js、Flask或Ruby on Rails等Web框架的经验。同时，具备数据库、应用架构、安全性、性能最佳实践、调试、故障排除和自动化测试的经验也非常重要。与其他开发人员、设计师和利益相关者合作对于创建用户友好的Web应用程序至关重要。\n 请用500字以内回复: 返回文本格式，必要的时候添加代码解释和注释。代码也在总体的字数控制范围内"
           },
           {
             "role": "user",
-            "content": "[软技能]  chatgpt对提升前端开发效率有什么帮助？\n 请用500字以内回复: 返回文本格式，必要的时候添加代码解释和注释。代码也在总体的字数控制范围内"
+            "content": "两个相邻的inline-block元素为什么会出现间隔，如何解决？\n 请用500字以内回复: 返回文本格式，必要的时候添加代码解释和注释。代码也在总体的字数控制范围内"
           },
           {
             "role": "assistant",
-            "content": 'ChatGPT 是一种基于大规模预训练的自然语言处理模型，它可以在很多方面帮助提升前端开发效率。\n\n首先，ChatGPT 可以用于自动化生成文档和注释。在前端开发中，文档和注释是非常重要的，它们可以帮助团队成员理解代码的功能和使用方法。通过 ChatGPT，我们可以输入相关的问题，比如如何使用某个 API 或者如何实现某个功能，然后它可以生成相应的文档和注释，减少手动编写的工作量，提 高开发效率。\n\n其次，ChatGPT 可以用于代码片段的自动生成。前端开发中经常会使用一些重复性的代码，比如创建表单、发送网络请求等。通过 ChatGPT，我们可以输入相应的问题，比如如何创建一个表单或者如何发送一个POST请求，然后它可以生成相应的代码片段，减少手动编写的工作量，提高开发效率。\n\n另外，ChatGPT 还可以用于解决开发中的问题和疑惑。在前端开发过程中，我们经常会遇到一些问题和疑惑，比如某个功能为什么不起作用、如何解决某个错误等。通过 ChatGPT，我们可以输入相关的问题，然后它可以给出相应的解答和建议，帮助我们解决问题和疑惑，提高开发效率。\n\n最后，ChatGPT 还可以用于快速查找和获取开发相关的信息。在前端开发中，我们经常需要查找一些开发文档、API 文档、技术文章等。通过 ChatGPT，我们可以输入相应的问题，比如如何使用某个 API 或者 如何实现某个功能，然后它可以给出相应的链接和摘要，帮助我们快速查找和获取开发相关的信息，提高开发效率。\n\n综上所述，ChatGPT 在前端开发中可以帮助自动生成文档和注释、生成代码片段、解决问题和疑惑，以及快速查找和获取开发相关的信息，从而提高前端开发的效率。'
+            "content": '两个相邻的inline-block元素之间出现间隔是因为它们之间存在空白字符，如空格、换行符或制表符。这些空白字符会被浏览器解释为实际的空白，从而在元素之间生成间隔。\n解决这个问题的方法有以下几种：\n1. ** 删除空白字符 **：\n将两个inline- block元素之间的空白字符删除，可以直接写在一行上：\n```html\n<div style="display: inline-block;"> 元素1</div> <div style="display: inline-block;">元素2</div>\n```\n2. ** 使用HTML注释 **：\n在两个元素之间使用HTML注释来去除空白字符：\n```html\n<div style="display: inline-block;"> 元素1</div>< !--\n--> <div style="display: inline-block;">元素2</div>\n```\n3. ** 设置父元素的字体大小为零 **：\n将父元素的`font - size`设置为0，然后在子元素中重置字体大小：\n```html\n<div style="font-size: 0;">\n<div style="display: inline-block; font-size: 16px;"> 元素1</div>\n<div style="display: inline-block; font-size: 16px;"> 元素2</div>\n</div>\n```\n4. ** 使用负边距 **：\n为第二个元素设置负的左边距（通常不推荐，因为可读性差）：\n```html\n<div style="display: inline-block;"> 元素1</div>\n<div style="display: inline-block;margin-left: -4px;"> 元素2</div>\n```\n5. ** 浮动元素 **：\n使用浮动来避免间隔（需清除浮动）：\n```html\n<div style="float: left;"> 元素1</div>\n<div style="float: left;"> 元素2</div>\n<div style="clear: both;"></div>\n```\n6. ** 使用Flexbox或Grid布局 **：\n使用现代布局模型，如Flexbox或Grid，可以避免这种问题：\n```html\n<div style="display: flex;">\n<div > 元素1</div>\n<div > 元素2</div>\n</div>\n```\n通过这些方法，可以有效地消除inline - block元素之间的间隔，确保布局的紧凑性和一致性。选择哪种方法取决于具体的需求和代码风格。'
           },
           {
             "role": "user",
-            "content": `请用500字以内回复: ${content}，\n  返回文本格式，必要的时候添加代码解释和注释,但是不要有任何的信息帮助之类的词汇总结。代码也在总体的字数控制范围内`
+            "content": `请用500字以内回复: ${content}，\n  返回文本格式，必要的时候添加代码解释和注释, 但是不要有任何的信息帮助之类的词汇总结。代码也在总体的字数控制范围内`
           }
         ],
         "temperature": 0.7
@@ -44,7 +44,7 @@ const chatCompletion = async (content) => {
           configEnv.chatgpt.BASE_URL ??
           'https://nakoruru.h7ml.cn/proxy/api.openai.com/v1/chat/completions',
         headers: {
-          Authorization: `Bearer ${configEnv.chatgpt.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${configEnv.chatgpt.OPENAI_API_KEY} `,
           'Content-Type': 'application/json',
         },
         data: data,
