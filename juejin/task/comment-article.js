@@ -53,5 +53,5 @@ async function articleComment(task) {
     }
     console.log(`评论文章 done`)
   }
-
-  module.exports = articleComment
+}
+module.exports = articleComment
