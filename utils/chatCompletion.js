@@ -12,6 +12,7 @@ const axios = require('axios')
 const _ = require('lodash')
 const configEnv = require('../config')
 const fs = require('fs')
+const path = require('path')
 const chatCompletion = async (content) => {
   const defaultCompletion = ''
   return new Promise(async (resolve) => {
@@ -21,7 +22,7 @@ const chatCompletion = async (content) => {
         "messages": [
           {
             "role": "system",
-            "content": fs.readFileSync('./system.md', 'utf-8')
+            "content": fs.readFileSync(path.join(__dirname, 'system.md'), 'utf-8')
           },
           {
             "role": "user",
@@ -29,7 +30,7 @@ const chatCompletion = async (content) => {
           },
           {
             "role": "assistant",
-            "content": fs.readFileSync('./assistant.md', 'utf-8')
+            "content": fs.readFileSync(path.join(__dirname, 'assistant.md'), 'utf-8')
           },
           {
             "role": "user",
