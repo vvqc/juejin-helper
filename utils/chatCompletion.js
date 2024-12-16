@@ -61,7 +61,16 @@ const chatCompletion = async (content) => {
     }
   })
 }
+let modifiedContent = translatedContent;
+if (modifiedContent.startsWith('```')) {
+  const endOfFirstLine = modifiedContent.indexOf('\n');
+  modifiedContent = modifiedContent.slice(endOfFirstLine + 1).trim();
+}
 
+if (modifiedContent.endsWith('```')) {
+  const startOfLastLine = modifiedContent.lastIndexOf('\n');
+  modifiedContent = modifiedContent.slice(0, startOfLastLine).trim();
+}
 module.exports = {
-  chatCompletion
+  modifiedContent
 }
