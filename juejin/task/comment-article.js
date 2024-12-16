@@ -41,11 +41,10 @@ async function articleComment(task) {
     if (!article) break
     const { article_id, article_info } = article
     await saveComments(article_id, 2)
-    const newDbComments = await dbGet('/comments/article')
     const { brief_content = '', title = '' } = article_info
     if (brief_content.length > 0 && title.length > 0) {
       const completion = await chatCompletion(title + brief_content)
-      const comments = defaultComments.concat(newDbComments || [])
+      const comments = defaultComments.concat([completion] || [])
       const index = getRandomInt(0, comments.length - 1)
       const comment = await API.articleCommentAdd(article_id, comments[index])
       // 删除评论

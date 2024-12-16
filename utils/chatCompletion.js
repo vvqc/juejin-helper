@@ -72,5 +72,5 @@ if (modifiedContent.endsWith('```')) {
   modifiedContent = modifiedContent.slice(0, startOfLastLine).trim();
 }
 module.exports = {
-  modifiedContent
+  chatCompletion: modifiedContent
 }

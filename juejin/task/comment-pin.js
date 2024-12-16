@@ -25,11 +25,7 @@ async function pinComment(task) {
     const { msg_id, content } = article.msg_Info
     const completion = await chatCompletion(content)
     await saveComments(msg_id, 4)
-    const newDbComments = await dbGet('/comments/pin')
-    const comments = [completion].concat(newDbComments || [])
-    const index = getRandomInt(0, comments.length - 1)
-    const words = comments[index] || completion
-    const comment = await API.articleCommentAdd(msg_id, words, 4)
+    const comment = await API.articleCommentAdd(msg_id, completion, 4)
     // 删除评论
     if (!config.user.privacy) await API.articleCommentRemove(comment.comment_id)
   }
