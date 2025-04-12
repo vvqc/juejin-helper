@@ -168,15 +168,23 @@ const chatCompletion = async (content) => {
 
   try {
     console.log('开始获取AI生成内容...');
-
     // 读取系统和助手的文件内容
     const systemContent = await fs.promises.readFile(path.join(__dirname, 'system.md'), 'utf-8');
+    const assistantContent = await fs.promises.readFile(path.join(__dirname, 'assistant.md'), 'utf-8');
 
     // 使用更简单的提示策略
     const messages = [
       {
         "role": "system",
         "content": systemContent
+      },
+      {
+        "role": "user",
+        "content": "两个相邻的inline-block元素为什么会出现间隔，如何解决？"
+      },
+      {
+        "role": "assistant",
+        "content": assistantContent
       },
       {
         "role": "user",
