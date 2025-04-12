@@ -30,7 +30,8 @@ module.exports = {
     juejinCookie: process.env.USER_COOKIE, //你的掘金登录手机号
   },
   chatgpt: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY, // OpanAI 密钥，你在 openai 账户页面申请的 api key。
-    BASE_URL: process.env.BASE_URL ?? 'https://api.openai.com/v1/chat/completions',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY, // OpanAI 密钥，你在 openai 账户页面申请的 api key
+    BASE_URL: process.env.BASE_URL || 'https://api.openai.com/v1/chat/completions',
+    MODEL: process.env.MODEL || 'deepseek-v3', // 使用的模型，默认为deepseek-v3
   },
 }
