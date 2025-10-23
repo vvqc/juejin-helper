@@ -98,7 +98,7 @@ async function getGitHubIssuesCount() {
 async function getInterview(type = 'beforetoday', all = false) {
   // 获取GitHub Issues总数并计算最大页码
   const totalIssues = await getGitHubIssuesCount();
-  const maxPage = Math.ceil(totalIssues / 5); // 每页5条数据
+  const maxPage = 165; // 每页5条数据
 
   // 生成1到maxPage之间的随机页码
   const page = _.random(1, maxPage);
