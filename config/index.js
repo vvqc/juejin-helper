@@ -32,6 +32,6 @@ module.exports = {
   chatgpt: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY, // OpanAI 密钥，你在 openai 账户页面申请的 api key
     BASE_URL: process.env.BASE_URL || 'https://api.openai.com/v1/chat/completions',
-    MODEL: process.env.MODEL || 'deepseek-v3', // 使用的模型，默认为deepseek-v3
+    MODEL: process.env.MODEL || 'gemini-2.5-flash', // 使用的模型，默认为deepseek-v3
   },
 }
