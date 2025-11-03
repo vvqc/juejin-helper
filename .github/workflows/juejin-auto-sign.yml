@@ -45,5 +45,6 @@ jobs:
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           USER_EMAIL: ${{ secrets.USER_EMAIL }}
           BASE_URL: ${{ secrets.BASE_URL }}
+          MODEL : ${{ secrets.MODEL }}
         run: |
           node index.js
