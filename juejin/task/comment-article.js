@@ -23,7 +23,12 @@ async function articleComment(task) {
     }
     // 获取文章
     const data = await API.getRecommendArticles()
-    const articleList = data.data
+    const articleList = (data && data.data) || []
+    if (!Array.isArray(articleList) || !articleList.length) {
+      console.log('获取文章失败或返回为空，跳过评论任务')
+      return
+    }
+
     const validArticleList = articleList.filter((item) => {
       return (
         item.item_type === 2 &&
