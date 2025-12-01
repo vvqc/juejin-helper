@@ -1,24 +1,48 @@
-/*
- * @Author: h7ml <h7ml@qq.com>
- * @Date: 2023-07-12 20:08:33
- * @LastEditors: h7ml <h7ml@qq.com>
- * @LastEditTime: 2023-07-13 01:55:47
- * @FilePath: \utils\interview.js
- * @Description:
- *
- * Copyright (c) 2023 by h7ml<h7ml@qq.com>, All Rights Reserved.
- */
 const _ = require('lodash')
 
+const PER_PAGE = 5
+const DEFAULT_MAX_PAGE = 160
+const REPO_API = 'https://api.github.com/repos/haizlin/fe-interview'
 const types = ['one', 'two', 'today', 'beforetoday', 'yestoday', 'week']
+
+const getGithubHeaders = () => {
+  const headers = {
+    'User-Agent': 'juejin-helper',
+    'Accept': 'application/vnd.github.v3+json'
+  }
+  return headers
+}
+
 // 存储GitHub Issues数量的缓存，避免频繁请求
 let issuesCountCache = {
   count: 0,
   timestamp: 0
 };
 
+async function getMaxPage() {
+  // 缓存10分钟，避免频繁请求GitHub
+  const now = Date.now()
+  if (issuesCountCache.timestamp && now - issuesCountCache.timestamp < 10 * 60 * 1000 && issuesCountCache.count > 0) {
+    return Math.max(1, Math.ceil(issuesCountCache.count / PER_PAGE))
+  }
+
+  try {
+    const response = await fetch(REPO_API, { headers: getGithubHeaders() })
+    if (!response.ok) {
+      throw new Error(`获取仓库信息失败，状态码: ${response.status}`)
+    }
+    const data = await response.json()
+    const count = data?.open_issues_count || 0
+    issuesCountCache = { count, timestamp: now }
+    return Math.max(1, Math.ceil(count / PER_PAGE))
+  } catch (error) {
+    console.warn('获取面试题页数失败，使用默认页数', error.message)
+    return DEFAULT_MAX_PAGE
+  }
+}
+
 async function getInterview(type = 'beforetoday', all = false) {
-  const maxPage = 165; // 每页5条数据
+  const maxPage = await getMaxPage() // 每页5条数据
 
   // 生成1到maxPage之间的随机页码
   const page = _.random(1, maxPage);
@@ -41,13 +65,10 @@ async function getInterview(type = 'beforetoday', all = false) {
       const response = await fetch(
         // 使用不同的API端点，避免422错误
         // 尝试使用GitHub的Issues API，每个仓库的限制不同
-        `https://api.github.com/repos/haizlin/fe-interview/issues?state=open&per_page=5&page=${page}`,
+        `${REPO_API}/issues?state=open&per_page=${PER_PAGE}&page=${page}`,
         {
           signal: controller.signal,
-          headers: {
-            'User-Agent': 'juejin-helper',
-            'Accept': 'application/vnd.github.v3+json'
-          }
+          headers: getGithubHeaders(),
         }
       )
 
