@@ -218,7 +218,7 @@ const chatCompletion = async (content, options = {}) => {
     ];
 
     // 支持自定义模型配置
-    const model = configEnv.chatgpt.MODEL || "gpt-3.5-turbo";
+    const model = configEnv.chatgpt.MODEL || "gemini-3-flash-preview";
     console.log(`使用AI模型: ${model}`);
 
     // 构建请求数据

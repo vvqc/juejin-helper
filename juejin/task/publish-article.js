@@ -105,7 +105,7 @@ const articlePublish = async (task) => {
       category_id = configEnv.juejin.category_id ||
         await API.getCategorys()
           .then((data) => {
-            return _.sample(data).category_id || '6809637767543259144';
+            return _.sample(Array.isArray(data) ? data : [])?.category_id || '6809637767543259144';
           });
     } catch (err) {
       errorMessage = `获取分类失败: ${err.message}`;
@@ -121,9 +121,10 @@ const articlePublish = async (task) => {
         await API.getListHot()
           .then((data) => {
             const numPositions = _.random(0, 9);
-            return (_.sampleSize(data, numPositions).map((obj) => {
+            const themeIds = _.sampleSize(data, numPositions).map((obj) => {
               return obj?.theme?.theme_id;
-            }) || ['7210002980895916043']);
+            }).filter(Boolean);
+            return themeIds.length ? themeIds : ['7210002980895916043'];
           });
     } catch (err) {
       errorMessage = `获取主题失败: ${err.message}`;
@@ -139,9 +140,10 @@ const articlePublish = async (task) => {
         await API.getTags()
           .then((data) => {
             const numPositions = _.random(1, 10);
-            return (_.sampleSize(data, numPositions).map((obj) => {
+            const tagIds = _.sampleSize(data, numPositions).map((obj) => {
               return obj?.tag_id;
-            }) || ['6809640407484334093']);
+            }).filter(Boolean);
+            return tagIds.length ? tagIds : ['6809640407484334093'];
           });
     } catch (err) {
       errorMessage = `获取标签失败: ${err.message}`;

@@ -410,7 +410,7 @@ class JuejinHttp {
     return this.request({
       method: 'POST',
       url: 'https://api.juejin.cn/tag_api/v1/query_tag_list',
-      body: { cursor: '0', key_word: '', limit: 10, sort_type: 1 },
+      data: { cursor: '0', key_word: '', limit: 10, sort_type: 1 },
     })
   }
 
@@ -440,7 +440,7 @@ class JuejinHttp {
     return this.request({
       method: 'POST',
       url: 'https://api.juejin.cn/tag_api/v1/theme/list_by_hot',
-      body: { user_id, cursor: '0', keyword: '', limit: 10 },
+      data: { user_id, cursor: '0', keyword: '', limit: 10 },
     })
   }
 }

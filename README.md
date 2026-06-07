@@ -37,7 +37,7 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
    - `EMAIL_USER`：发送邮件的邮箱账号。
    - `EMAIL_PASS`：发送邮件的授权码。
    - `USER_EMAIL`：接收通知的邮箱账号。
-   - `MODEL`：(可选) 指定使用的AI模型，默认为 `gemini-2.5-flash`。
+   - `MODEL`：(可选) 指定使用的AI模型，默认为 Google 官方 Gemini 3 Flash 预览版 `gemini-3-flash-preview`。
 
 3. 在 `Settings->Actions` 确保 Actions 功能处于开启状态。
 
@@ -72,7 +72,7 @@ USER_EMAIL=接收通知的邮箱
 EMAIL_HOST=邮件服务器地址（可选）
 
 # AI模型配置
-MODEL=gemini-2.5-flash
+MODEL=gemini-3-flash-preview
 BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 
 # 文章发布配置
