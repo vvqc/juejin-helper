@@ -12,8 +12,8 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 
 - **自动签到**：利用用户的掘金网站 Cookie 实现自动签到，省去手动操作的繁琐过程。
 - **日常任务处理**：通过 GitHub Actions 实现自动化处理掘金网站的日常任务，提高效率和节省时间。
-- **使用 OpenAI API**：通过提供的 OpenAI API 实现更智能化的功能，例如自动发布文章、沸点和评论。
-- **环境变量配置**：项目使用环境变量来存储敏感信息，包括用户的掘金网站 Cookie、OpenAI 密钥以及 OpenAI 接口地址等，保证数据安全性。
+- **使用 Gemini/OpenAI 兼容 API**：通过提供的 AI API 实现更智能化的功能，例如自动发布文章、沸点和评论。
+- **环境变量配置**：项目使用环境变量来存储敏感信息，包括用户的掘金网站 Cookie、Gemini/OpenAI 兼容接口密钥以及接口地址等，保证数据安全性。
 - **集成邮件通知**：任务执行结果会通过精美的邮件模板发送通知，提供完整的执行报告。
 - **可扩展性**：项目提供了基础的功能，用户可以根据自己的需求进行二次开发和定制化。
 
@@ -32,12 +32,12 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 2. 在仓库的 `Settings->Secrets->Actions` 中添加如下几个环境变量：
 
    - `USER_COOKIE`：掘金网站的 Cookie，用于用户登录和接口请求。
-   - `OPENAI_API_KEY`：OpenAI 密钥，你在 OpenAI 账户页面申请的 API Key。
-   - `BASE_URL`：OpenAI 的接口地址，默认为 `https://api.openai.com/v1/chat/completions`，也可以使用代理进行配置。
+   - `GEMINI_API_KEY`：Google AI Studio 申请的 Gemini API Key。也兼容继续使用 `OPENAI_API_KEY`。
+   - `BASE_URL`：OpenAI 兼容接口地址，默认为 Google 官方 Gemini OpenAI 兼容接口 `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`。也可以配置为 Google 文档里的 base URL `https://generativelanguage.googleapis.com/v1beta/openai/`，程序会自动补上 `/chat/completions`。
    - `EMAIL_USER`：发送邮件的邮箱账号。
    - `EMAIL_PASS`：发送邮件的授权码。
    - `USER_EMAIL`：接收通知的邮箱账号。
-   - `MODEL`：(可选) 指定使用的AI模型，默认为 `deepseek-v3`，也可以设置为 `gpt-3.5-turbo` 或 `gpt-4` 等。
+   - `MODEL`：(可选) 指定使用的AI模型，默认为 `gemini-2.5-flash`。
 
 3. 在 `Settings->Actions` 确保 Actions 功能处于开启状态。
 
@@ -53,7 +53,7 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 
 6. 最小配置要求：
    - 只设置 `USER_COOKIE` 可完成基础的签到功能
-   - 要使用发布文章、沸点和评论功能，需要额外设置 `OPENAI_API_KEY`
+   - 要使用发布文章、沸点和评论功能，需要额外设置 `GEMINI_API_KEY` 或 `OPENAI_API_KEY`
    - 要接收邮件通知，需要设置邮件相关的三个环境变量
 
 ## 自定义配置
@@ -63,7 +63,7 @@ juejin-helper 是一个用于掘金网站的辅助工具，通过使用用户的
 ```
 # 基础配置
 USER_COOKIE=您的掘金Cookie
-OPENAI_API_KEY=您的OpenAI密钥
+GEMINI_API_KEY=您的Gemini API密钥
 
 # 邮件配置
 EMAIL_USER=发送邮件的邮箱
@@ -72,8 +72,8 @@ USER_EMAIL=接收通知的邮箱
 EMAIL_HOST=邮件服务器地址（可选）
 
 # AI模型配置
-MODEL=deepseek-v3
-BASE_URL=https://api.openai.com/v1/chat/completions
+MODEL=gemini-2.5-flash
+BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 
 # 文章发布配置
 category_id=分类ID（可选）

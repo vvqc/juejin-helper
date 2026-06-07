@@ -38,6 +38,7 @@ jobs:
         env:
           USER_COOKIE: ${{ secrets.USER_COOKIE }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           USER_EMAIL: ${{ secrets.USER_EMAIL }}

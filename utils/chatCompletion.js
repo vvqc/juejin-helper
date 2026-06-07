@@ -91,7 +91,7 @@ function formatErrorDetails(error) {
     // 针对不同状态码给出具体建议
     switch (error.response.status) {
       case 401:
-        details.suggestion = 'API密钥无效或已过期，请检查OPENAI_API_KEY配置';
+        details.suggestion = 'API密钥无效或已过期，请检查GEMINI_API_KEY或OPENAI_API_KEY配置';
         break;
       case 403:
         details.suggestion = '权限被拒绝，API密钥可能没有足够的权限或已被限制';
@@ -128,7 +128,7 @@ function formatErrorDetails(error) {
 function logErrorToConsole(errorDetails) {
   // 创建一个彩色边框的错误框
   const errorBox = [
-    '\x1b[31m╔════════════════════ ChatGPT API 调用失败 ════════════════════╗\x1b[0m',
+    '\x1b[31m╔════════════════════ AI API 调用失败 ════════════════════╗\x1b[0m',
     `\x1b[31m║\x1b[0m 错误类型: \x1b[1m${errorDetails.type}\x1b[0m`,
     `\x1b[31m║\x1b[0m 错误消息: \x1b[1m${errorDetails.message}\x1b[0m`,
     `\x1b[31m║\x1b[0m 错误代码: \x1b[1m${errorDetails.code}\x1b[0m`
@@ -158,6 +158,13 @@ function logErrorToConsole(errorDetails) {
       ? JSON.stringify(errorDetails.serverResponse, null, 2)
       : errorDetails.serverResponse);
   }
+}
+
+function normalizeChatCompletionsUrl(url) {
+  const defaultUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
+  const apiUrl = (url || defaultUrl).trim()
+  if (apiUrl.endsWith('/chat/completions')) return apiUrl
+  return `${apiUrl.replace(/\/+$/, '')}/chat/completions`
 }
 
 const chatCompletion = async (content) => {
@@ -222,7 +229,7 @@ const chatCompletion = async (content) => {
 
     const config = {
       method: 'post',
-      url: configEnv.chatgpt.BASE_URL || 'https://api.openai.com/v1/chat/completions',
+      url: normalizeChatCompletionsUrl(configEnv.chatgpt.BASE_URL),
       headers: {
         Authorization: `Bearer ${configEnv.chatgpt.OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
@@ -273,5 +280,6 @@ const chatCompletion = async (content) => {
 };
 
 module.exports = {
-  chatCompletion
+  chatCompletion,
+  normalizeChatCompletionsUrl
 };

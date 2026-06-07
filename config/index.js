@@ -30,8 +30,8 @@ module.exports = {
     juejinCookie: process.env.USER_COOKIE, //你的掘金登录手机号
   },
   chatgpt: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY, // OpanAI 密钥，你在 openai 账户页面申请的 api key
-    BASE_URL: process.env.BASE_URL || 'https://api.openai.com/v1/chat/completions',
-    MODEL: process.env.MODEL || 'gemini-2.5-flash', // 使用的模型，默认为deepseek-v3
+    OPENAI_API_KEY: process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY, // Gemini/OpenAI 兼容接口密钥
+    BASE_URL: process.env.BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+    MODEL: process.env.MODEL || 'gemini-2.5-flash',
   },
 }
