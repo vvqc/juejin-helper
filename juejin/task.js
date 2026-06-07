@@ -13,32 +13,33 @@ const {
 async function handleTask(task) {
   const id = task.task_id
   if (id == 13) {
-    await readArticle(task)
+    return readArticle(task)
   }
   if (id == 9) {
-    await diggArticle(task)
+    return diggArticle(task)
   }
   if (id == 12) {
-    await collectArticle(task)
+    return collectArticle(task)
   }
   if (id == 11) {
-    await followAuthor(task)
+    return followAuthor(task)
   }
   if (id == 7) {
-    await commentArticle(task)
+    return commentArticle(task)
   }
   if (id == 8) {
-    await commentPin(task)
+    return commentPin(task)
   }
   if (id == 10) {
-    await diggPin(task)
+    return diggPin(task)
   }
   if (id == 6) {
-    await publishPin(task)
+    return publishPin(task)
   }
   if (id == 5) {
-    await publishArticle(task)
+    return publishArticle(task)
   }
+  return true
 }
 
 module.exports = {

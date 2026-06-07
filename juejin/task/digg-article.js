@@ -13,7 +13,7 @@ async function articleDigg(task) {
   const list = articles.filter((v) => v.user_interact && v.user_interact.is_digg === false)
   if (list.length == 0) {
     console.log(`获取文章列表失败[d1]`)
-    return
+    return false
   }
   const times = task.limit - task.done // 需要执行的次数
   console.log(`需要点赞${times}篇文章`)
@@ -26,6 +26,7 @@ async function articleDigg(task) {
     if (!config.user.privacy) await API.diggCancel(article.article_id)
   }
   console.log(`点赞文章 done`)
+  return true
 }
 
 module.exports = articleDigg

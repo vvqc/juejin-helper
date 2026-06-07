@@ -12,10 +12,11 @@ async function getArticleList(sort_type) {
   const list = await API.getRecommendArticles(sort_type).catch((err) => {
     console.log(err)
   })
+  const feedList = Array.isArray(list) ? list : Array.isArray(list?.data) ? list.data : []
   const articles = []
-  list.map((v) => {
-    if (v.item_type == 2) {
-      articles.push(v.item_info)
+  feedList.forEach((v) => {
+    if (v.item_type == 2 || v.article_info) {
+      articles.push(v.item_info || v)
     }
   })
   return articles || []
@@ -26,8 +27,17 @@ async function saveComments(item_id, type = 2) {
   const dbKey = type == 2 ? '/comments/article' : '/comments/pin'
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
-  const commentItems = await API.getArticleComments(item_id, type)
-  const commentWords = commentItems.map((v) => v.comment_info.comment_content)
+  const commentItems = await API.getArticleComments(item_id, type).catch((err) => {
+    console.log(err)
+  })
+  const commentList = Array.isArray(commentItems)
+    ? commentItems
+    : Array.isArray(commentItems?.comments)
+      ? commentItems.comments
+      : []
+  const commentWords = commentList
+    .map((v) => v.comment_info?.comment_content || v.comment_content)
+    .filter(Boolean)
   const dbComments = await dbGet(dbKey)
   if (dbComments && dbComments.length >= COMMENTS_MAX_LENGTH) return
   for (const item of commentWords) {

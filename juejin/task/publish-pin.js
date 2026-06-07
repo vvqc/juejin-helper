@@ -1,10 +1,9 @@
 const { getCookie } = require('../cookie')
 const JuejinHttp = require('../api')
-const { getInterview, types } = require('../../utils/interview')
+const { getInterview } = require('../../utils/interview')
 const { chatCompletion } = require('../../utils/chatCompletion')
 const configEnv = require('../../config')
 const { getInterviewHot } = require('../../utils/interviewHot')
-const _ = require('lodash')
 
 // 发布沸点
 async function pinPublish(task) {
@@ -17,14 +16,15 @@ async function pinPublish(task) {
     const interview = await getInterview().catch(() => getInterviewHot())
     if (!interview || !interview.length) {
       console.log(`获取面试题失败，跳过发沸点任务`)
-      return
+      return false
     }
     const times = task.limit - task.done // 需要执行的次数
     console.log(`需要发布${times}篇沸点`)
     if (!configEnv.chatgpt.OPENAI_API_KEY) {
       console.log(`未配置OPENAI_API_KEY,跳过沸点发布`)
-      return
+      return false
     }
+    let publishCount = 0
     for (let i = 0; i < times; i++) {
       const result = await chatCompletion('请用500字以内回复:' + '\n' + `${interview}`)
       const isDefaultContent = result.isDefaultContent || false;
@@ -52,12 +52,14 @@ async function pinPublish(task) {
       // 删除刚发布的沸点
       // if (config.user.privacy) await API.pinRemove(pinRes['msg_id']);
       console.log(`发布沸点 done`)
+      publishCount++
     }
+    return publishCount > 0
   } catch (error) {
     console.log('发沸点失败')
     console.log(error)
+    return false
   }
-  console.log(`发布沸点 done`)
 }
 
 module.exports = pinPublish

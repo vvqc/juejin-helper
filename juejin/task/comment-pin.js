@@ -4,9 +4,17 @@ const { getCookie } = require('../cookie')
 const JuejinHttp = require('../api')
 const config = require('../../config')
 const { isDupComment } = require('../../utils/isDupComment')
-const { deepMerge } = require('../../utils')
-const { getRandomInt } = require('../../utils')
 const { chatCompletion } = require('../../utils/chatCompletion')
+
+function normalizePinList(data) {
+  if (Array.isArray(data)) return data
+  if (Array.isArray(data?.data)) return data.data
+  return []
+}
+
+function getPinInfo(item) {
+  return item?.msg_info || item?.msg_Info || item?.item_info?.msg_info || item?.item_info?.msg_Info || {}
+}
 
 // 评论沸点
 async function commentPin(task) {
@@ -18,12 +26,12 @@ async function commentPin(task) {
     console.log(`需要评论${times}篇沸点`)
     if (!config.chatgpt.OPENAI_API_KEY) {
       console.log(`未配置OPENAI_API_KEY,跳过评论沸点`)
-      return
+      return false
     }
 
     // 获取沸点
     const data = await API.getRecommendPins()
-    const pinList = data.data
+    const pinList = normalizePinList(data)
     if (pinList && pinList.length) {
       const commentCount = Math.min(times, pinList.length)
       let actualCommentCount = 0
@@ -31,8 +39,13 @@ async function commentPin(task) {
       for (let i = 0; i < commentCount; i++) {
         try {
           const item = pinList[i]
-          const msg_id = item.msg_id
-          const content = item.msg_info.content || '前端面试题'
+          const pinInfo = getPinInfo(item)
+          const msg_id = item.msg_id || pinInfo.msg_id
+          const content = pinInfo.content || item.content || '前端面试题'
+          if (!msg_id) {
+            console.log(`沸点信息缺少msg_id，跳过`)
+            continue
+          }
 
           // 检查是否已评论过
           const comments = await API.getArticleComments(msg_id, 4)
@@ -70,11 +83,14 @@ async function commentPin(task) {
         }
       }
       console.log(`沸点评论完成，成功评论${actualCommentCount}篇沸点`)
+      return actualCommentCount > 0
     } else {
       console.log('获取沸点列表失败')
+      return false
     }
   } catch (err) {
     console.error('评论沸点任务失败:', err.message)
+    return false
   }
 }
 

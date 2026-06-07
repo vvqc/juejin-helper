@@ -8,14 +8,14 @@ async function articleCollect(task) {
   const list = articles.filter((v) => v.user_interact && v.user_interact.is_collect === false)
   if (list.length == 0) {
     console.log(`获取文章列表失败[d1]`)
-    return
+    return false
   }
   const cookie = await getCookie()
   const API = new JuejinHttp(cookie)
   const collectionList = await API.getMyCollectionset()
-  if (collectionList.length == 0) {
+  if (!Array.isArray(collectionList) || collectionList.length == 0) {
     console.log(`获取收藏集失败`)
-    return
+    return false
   }
   // 取第一个收藏集  一般为默认 收藏集
   const { collection_id, collection_name } = collectionList[0]
@@ -29,5 +29,6 @@ async function articleCollect(task) {
     if (!config.user.privacy) await API.articleCollectRemove(article_id)
   }
   console.log(`收藏文章 done`)
+  return true
 }
 module.exports = articleCollect

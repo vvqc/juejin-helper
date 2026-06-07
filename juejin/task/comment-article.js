@@ -2,12 +2,9 @@
 const _ = require('lodash')
 const { getCookie } = require('../cookie')
 const JuejinHttp = require('../api')
-const { getArticleList, saveComments } = require('../common')
-const { insertTo, dbGet } = require('../../utils/db')
+const { getArticleList } = require('../common')
 const config = require('../../config')
 const { chatCompletion } = require('../../utils/chatCompletion')
-const { getRandomInt } = require('./../../utils/index')
-const { deepMerge } = require('../../utils')
 const { isDupComment } = require('../../utils/isDupComment')
 
 async function articleComment(task) {
@@ -19,14 +16,13 @@ async function articleComment(task) {
     console.log(`需要评论${times}篇文章`)
     if (!config.chatgpt.OPENAI_API_KEY) {
       console.log(`未配置OPENAI_API_KEY,跳过评论文章`)
-      return
+      return false
     }
     // 获取文章
-    const data = await API.getRecommendArticles()
-    const articleList = (data && data.data) || []
+    const articleList = await getArticleList()
     if (!Array.isArray(articleList) || !articleList.length) {
       console.log('获取文章失败或返回为空，跳过评论任务')
-      return
+      return false
     }
 
     const validArticleList = articleList.filter((item) => {
@@ -43,7 +39,7 @@ async function articleComment(task) {
       let actualCommentCount = 0
       for (let i = 0; i < commentCount; i++) {
         const item = validArticleList[i]
-        const article_id = item.article_id
+        const article_id = item.article_id || item.article_info.article_id
         const title = item.article_info.title
         const brief_content = item.article_info.brief_content
 
@@ -84,11 +80,14 @@ async function articleComment(task) {
         }
       }
       console.log(`文章评论完成，成功评论${actualCommentCount}篇文章`)
+      return actualCommentCount > 0
     } else {
       console.log('获取文章失败')
+      return false
     }
   } catch (err) {
     console.error('评论文章任务失败:', err.message)
+    return false
   }
 }
 

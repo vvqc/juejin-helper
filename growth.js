@@ -95,7 +95,10 @@ async function growth() {
         if (task.limit > 0 && task.done < task.limit && ![4, 15, 16].includes(task.task_id)) {
           console.log(`---开始任务：<${task.title}> ---`)
           try {
-            await handleTask(task)
+            const taskResult = await handleTask(task)
+            if (taskResult === false || taskResult?.success === false) {
+              throw new Error(taskResult?.message || '任务未成功完成')
+            }
             taskCompletedCount++
             const taskSuccess = `任务《${task.title}》完成`;
             taskSuccesses.push(taskSuccess);
@@ -187,7 +190,7 @@ async function growth() {
 // 发送合并的邮件
 async function sendCombinedEmail(subject, content, successes, errors, username, userId, points) {
   try {
-    await sendEmail({
+    const sent = await sendEmail({
       to: config.user.email,
       subject: subject,
       data: {
@@ -202,9 +205,15 @@ async function sendCombinedEmail(subject, content, successes, errors, username, 
         }
       }
     });
-    console.log(`发送合并邮件成功：${subject}`);
+    if (sent) {
+      console.log(`发送合并邮件成功：${subject}`);
+    } else {
+      console.log(`合并邮件未发送：${subject}`);
+    }
+    return sent
   } catch (err) {
     console.error('发送邮件失败:', err.message);
+    return false
   }
 }
 

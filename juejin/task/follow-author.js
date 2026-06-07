@@ -7,10 +7,10 @@ async function followAuthor(task) {
   const API = new JuejinHttp(cookie)
   await API.toggleFollowAuthor('2559318802569198', false)
   const authors = await API.getRecommendAuthors()
-  const list = authors.filter((v) => v.isfollowed === false)
+  const list = Array.isArray(authors) ? authors.filter((v) => v.isfollowed === false) : []
   if (list.length == 0) {
     console.log(`获取推荐用户失败[r1]`)
-    return
+    return false
   }
 
   const times = task.limit - task.done // 需要执行的次数
@@ -25,6 +25,7 @@ async function followAuthor(task) {
     if (!config.user.privacy) await API.toggleFollowAuthor(author.user_id, false)
   }
   console.log(`关注用户 done`)
+  return true
 }
 
 module.exports = followAuthor

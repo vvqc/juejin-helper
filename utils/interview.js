@@ -2,6 +2,7 @@ const _ = require('lodash')
 
 const PER_PAGE = 5
 const DEFAULT_MAX_PAGE = 160
+const GITHUB_ISSUES_PAGE_LIMIT = 167
 const REPO_API = 'https://api.github.com/repos/haizlin/fe-interview'
 const types = ['one', 'two', 'today', 'beforetoday', 'yestoday', 'week']
 
@@ -23,7 +24,7 @@ async function getMaxPage() {
   // 缓存10分钟，避免频繁请求GitHub
   const now = Date.now()
   if (issuesCountCache.timestamp && now - issuesCountCache.timestamp < 10 * 60 * 1000 && issuesCountCache.count > 0) {
-    return Math.max(1, Math.ceil(issuesCountCache.count / PER_PAGE))
+    return Math.max(1, Math.min(Math.ceil(issuesCountCache.count / PER_PAGE), GITHUB_ISSUES_PAGE_LIMIT))
   }
 
   try {
@@ -33,8 +34,13 @@ async function getMaxPage() {
     }
     const data = await response.json()
     const count = data?.open_issues_count || 0
+    const countBasedMaxPage = Math.ceil(count / PER_PAGE)
+    const maxPage = Math.min(countBasedMaxPage || DEFAULT_MAX_PAGE, GITHUB_ISSUES_PAGE_LIMIT)
     issuesCountCache = { count, timestamp: now }
-    return Math.max(1, Math.ceil(count / PER_PAGE))
+    if (countBasedMaxPage > GITHUB_ISSUES_PAGE_LIMIT) {
+      console.log(`GitHub Issues页数${countBasedMaxPage}超过page参数上限${GITHUB_ISSUES_PAGE_LIMIT}，使用安全页数${maxPage}`)
+    }
+    return Math.max(1, maxPage)
   } catch (error) {
     console.warn('获取面试题页数失败，使用默认页数', error.message)
     return DEFAULT_MAX_PAGE
@@ -42,10 +48,10 @@ async function getMaxPage() {
 }
 
 async function getInterview(type = 'beforetoday', all = false) {
-  const maxPage = await getMaxPage() // 每页5条数据
+  let maxPage = await getMaxPage() // 每页5条数据
 
   // 生成1到maxPage之间的随机页码
-  const page = _.random(1, maxPage);
+  let page = _.random(1, maxPage);
   console.log(`随机获取第${page}页面试题(总共${maxPage}页)`);
 
   const regex = /第\d+天/g
@@ -75,7 +81,10 @@ async function getInterview(type = 'beforetoday', all = false) {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text().catch(() => '')
+        const error = new Error(`HTTP error! status: ${response.status}${errorText ? `, body: ${errorText.slice(0, 200)}` : ''}`)
+        error.status = response.status
+        throw error
       }
 
       const data = await response.json()
@@ -94,6 +103,11 @@ async function getInterview(type = 'beforetoday', all = false) {
     } catch (error) {
       lastError = error
       retries++
+      if (error.status === 422 && maxPage > 1) {
+        maxPage = Math.max(1, Math.min(DEFAULT_MAX_PAGE, page - 1))
+        page = _.random(1, maxPage)
+        console.warn(`GitHub Issues分页超过可用范围，切换到第${page}页重试(总共${maxPage}页)`)
+      }
       console.log(`获取面试题失败，正在进行第 ${retries} 次重试...`)
       // 等待一段时间后重试
       await new Promise(resolve => setTimeout(resolve, 2000))

@@ -109,7 +109,7 @@ function formatHTMLEmail(data) {
  * @returns {Promise}
  */
 async function sendEmail(params) {
-  if (!config.email.provider.auth.user || !config.email.provider) {
+  if (!config.email.provider || !config.email.provider.auth || !config.email.provider.auth.user || !config.email.provider.auth.pass) {
     console.log(`未配置邮箱信息`)
     return
   }

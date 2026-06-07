@@ -121,7 +121,7 @@ const articlePublish = async (task) => {
         await API.getListHot()
           .then((data) => {
             const numPositions = _.random(0, 9);
-            return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
+            return (_.sampleSize(data, numPositions).map((obj) => {
               return obj?.theme?.theme_id;
             }) || ['7210002980895916043']);
           });
@@ -139,7 +139,7 @@ const articlePublish = async (task) => {
         await API.getTags()
           .then((data) => {
             const numPositions = _.random(1, 10);
-            return (themeIds = _.sampleSize(data, numPositions).map((obj) => {
+            return (_.sampleSize(data, numPositions).map((obj) => {
               return obj?.tag_id;
             }) || ['6809640407484334093']);
           });
@@ -164,7 +164,7 @@ const articlePublish = async (task) => {
         text: `文章发布失败: 未配置OPENAI_API_KEY`,
       }).catch(err => console.error('发送邮件失败:', err.message));
 
-      return;
+      return false;
     }
 
     let articles = [];
@@ -237,11 +237,12 @@ const articlePublish = async (task) => {
         text: `文章发布失败: 没有成功生成任何文章\n\n错误详情:\n${errorMessages.join('\n')}`,
       }).catch(err => console.error('发送邮件失败:', err.message));
 
-      return;
+      return false;
     }
 
     // 尝试使用浏览器方式发布
     let browserPublishSuccess = false;
+    let publishSuccess = false;
     try {
       const browser = await getBrowser();
       if (!browser) {
@@ -315,6 +316,7 @@ const articlePublish = async (task) => {
             if (publishResJson.err_no == 0) {
               console.log(`第${i + 1}篇文章《${title}》发布成功`);
               browserPublishSuccess = true;
+              publishSuccess = true;
             } else {
               errorMessage = `第${i + 1}篇文章发布失败: ${JSON.stringify(publishResJson)}`;
               errorMessages.push(errorMessage);
@@ -370,6 +372,7 @@ const articlePublish = async (task) => {
 
           console.log(`第${i + 1}篇文章《${title}》API方式发布成功，文章ID: ${article_id}`);
           apiPublishSuccess = true;
+          publishSuccess = true;
         } catch (err) {
           errorMessage = `第${i + 1}篇文章API方式发布失败: ${err.message}`;
           errorMessages.push(errorMessage);
@@ -388,6 +391,7 @@ const articlePublish = async (task) => {
     }
 
     console.log(`发布文章任务完成`);
+    return publishSuccess
 
   } catch (error) {
     const errorMessage = `发布文章任务整体失败: ${error.message}`;
@@ -400,6 +404,7 @@ const articlePublish = async (task) => {
       subject: '【掘金】文章发布任务失败',
       text: `文章发布任务失败\n\n错误详情:\n${errorMessages.join('\n')}`,
     }).catch(err => console.error('发送邮件失败:', err.message));
+    return false
   }
 }
 

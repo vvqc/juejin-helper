@@ -5,13 +5,12 @@
  * @returns {Boolean} 是否已评论过
  */
 function isDupComment(comments, userId = null) {
-  // 如果没有获取到评论列表或者评论列表为空，返回false
-  if (!comments || !comments.length) {
-    return false;
-  }
-
   // 获取评论列表
-  const commentList = comments.comments || [];
+  const commentList = Array.isArray(comments)
+    ? comments
+    : Array.isArray(comments?.comments)
+      ? comments.comments
+      : [];
   if (!commentList || !commentList.length) {
     return false;
   }
