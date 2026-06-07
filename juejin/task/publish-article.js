@@ -182,10 +182,10 @@ const articlePublish = async (task) => {
         console.log('当前文章标题:', title);
 
         const query = interviewInfo.body
-          ? '请写一篇一千字的markdown格式文章  核心内容是关于:\n' + title + '\n请将内容过滤标题和问题,只保留答案'
-          : '请写一篇一千字markdown格式的文章  标题是:\n' + title;
+          ? '请写一篇800到1200字的完整Markdown文章，核心内容是关于:\n' + title + '\n请将内容过滤标题和问题,只保留答案。要求结构完整，包含小标题、要点和总结，不要中途截断。'
+          : '请写一篇800到1200字的完整Markdown文章，标题是:\n' + title + '\n要求结构完整，包含小标题、要点和总结，不要中途截断。';
 
-        const result = await chatCompletion(query);
+        const result = await chatCompletion(query, { maxTokens: 2000, maxRetries: 3 });
         const isDefaultContent = result.isDefaultContent || false;
         const content = result.content || result; // 兼容旧版返回格式
 
@@ -197,6 +197,13 @@ const articlePublish = async (task) => {
           errorMessage = `第${i + 1}篇文章内容为空，跳过`;
           errorMessages.push(errorMessage);
           console.error(errorMessage);
+          continue;
+        }
+
+        if (content.length < 300) {
+          errorMessage = `第${i + 1}篇文章《${title}》内容过短(${content.length}字)，跳过发布`;
+          errorMessages.push(errorMessage);
+          console.warn(errorMessage);
           continue;
         }
 

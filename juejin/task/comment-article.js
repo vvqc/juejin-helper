@@ -27,10 +27,8 @@ async function articleComment(task) {
 
     const validArticleList = articleList.filter((item) => {
       return (
-        item.item_type === 2 &&
         item.article_info &&
-        item.article_info.audit_status === 2 &&
-        item.article_info.verify_status !== 0
+        (item.article_id || item.article_info.article_id)
       )
     })
     // 评论文章
@@ -53,7 +51,7 @@ async function articleComment(task) {
           }
 
           // 获取评论内容
-          const result = await chatCompletion(title + brief_content)
+          const result = await chatCompletion(title + brief_content, { maxTokens: 160, maxRetries: 3 })
           const isDefaultContent = result.isDefaultContent || false;
           const completion = result.content || result; // 兼容旧版返回格式
 

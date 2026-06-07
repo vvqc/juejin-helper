@@ -36,6 +36,12 @@ class JuejinHttp {
       axios(opts)
         .then((res) => {
           const data = res.data || {}
+          if (data.err_no !== undefined && data.err_no !== 0) {
+            const error = new Error(data.err_msg || data.err_msg_zh || `掘金接口返回错误: ${data.err_no}`)
+            error.responseData = data
+            reject(error)
+            return
+          }
           resolve(data.data)
         })
         .catch((err) => {

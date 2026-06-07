@@ -9,7 +9,6 @@
  * Copyright (c) 2023 by h7ml<h7ml@qq.com>, All Rights Reserved.
  */
 const axios = require('axios')
-const _ = require('lodash')
 const configEnv = require('../config')
 const fs = require('fs')
 const path = require('path')
@@ -167,7 +166,26 @@ function normalizeChatCompletionsUrl(url) {
   return `${apiUrl.replace(/\/+$/, '')}/chat/completions`
 }
 
-const chatCompletion = async (content) => {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function getRetryDelayMs(error) {
+  const data = error.response?.data
+  const errorData = Array.isArray(data) ? data[0]?.error : data?.error || data
+  const details = Array.isArray(errorData?.details) ? errorData.details : []
+  const retryInfo = details.find((detail) => String(detail?.['@type'] || '').includes('RetryInfo'))
+  const retryDelay = retryInfo?.retryDelay
+  const delayMatch = typeof retryDelay === 'string' ? retryDelay.match(/^([\d.]+)s$/) : null
+  if (delayMatch) return Math.ceil(Number(delayMatch[1]) * 1000) + 1000
+
+  const messageMatch = String(errorData?.message || '').match(/retry in ([\d.]+)s/i)
+  if (messageMatch) return Math.ceil(Number(messageMatch[1]) * 1000) + 1000
+
+  return 10000
+}
+
+const chatCompletion = async (content, options = {}) => {
   const defaultCompletion = {
     content: '前端开发是构建用户可见和可交互的网页部分的过程。它结合了HTML、CSS和JavaScript等技术，确保网站具有良好的外观和顺畅的用户体验。前端开发者需要关注性能优化、跨浏览器兼容性、响应式设计和无障碍访问。现代前端开发还涉及使用React、Vue或Angular等框架，以及Webpack等构建工具来提高开发效率。',
     isDefaultContent: true
@@ -207,8 +225,8 @@ const chatCompletion = async (content) => {
     const requestData = {
       "model": model,
       "messages": messages,
-      "temperature": 0.7,
-      "max_tokens": 1000
+      "temperature": options.temperature ?? 0.7,
+      "max_tokens": options.maxTokens || 1000
     };
 
     // deepseek模型设置为非流
@@ -241,9 +259,25 @@ const chatCompletion = async (content) => {
     console.log(`开始请求AI模型，API URL: ${config.url.split('?')[0]}`);
     console.log(`请求大小: ${requestDataSizeKB}KB, 超时设置: ${timeout / 1000}秒`);
 
-    const startTime = Date.now();
-    const response = await axios(config);
-    const requestTime = Date.now() - startTime;
+    const maxRetries = options.maxRetries ?? 2
+    let response
+    let requestTime = 0
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const startTime = Date.now();
+      try {
+        response = await axios(config);
+        requestTime = Date.now() - startTime;
+        break
+      } catch (error) {
+        if (error.response?.status === 429 && attempt < maxRetries) {
+          const retryDelayMs = getRetryDelayMs(error)
+          console.warn(`AI API触发限流，等待${Math.ceil(retryDelayMs / 1000)}秒后重试(${attempt + 1}/${maxRetries})`)
+          await sleep(retryDelayMs)
+          continue
+        }
+        throw error
+      }
+    }
 
     console.log(`AI响应成功，耗时: ${requestTime}ms`);
 

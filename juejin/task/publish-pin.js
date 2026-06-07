@@ -26,7 +26,7 @@ async function pinPublish(task) {
     }
     let publishCount = 0
     for (let i = 0; i < times; i++) {
-      const result = await chatCompletion('请用500字以内回复:' + '\n' + `${interview}`)
+      const result = await chatCompletion('请用500字以内回复:' + '\n' + `${interview}`, { maxTokens: 300, maxRetries: 3 })
       const isDefaultContent = result.isDefaultContent || false;
       const completion = result.content || result; // 兼容旧版返回格式
 

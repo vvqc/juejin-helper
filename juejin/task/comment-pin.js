@@ -56,7 +56,7 @@ async function commentPin(task) {
           }
 
           // 获取评论内容
-          const result = await chatCompletion(content)
+          const result = await chatCompletion(content, { maxTokens: 160, maxRetries: 3 })
           const isDefaultContent = result.isDefaultContent || false;
           const completion = result.content || result; // 兼容旧版返回格式
 
